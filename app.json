@@ -4,12 +4,12 @@
     "slug": "faithtrack",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/faithtracker_icon-removebg-preview (1).png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FEF9EF"
     },
     "ios": {
       "supportsTablet": true
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font",
+      "expo-localization",
+      "expo-secure-store",
+      "expo-web-browser"
+    ]
   }
 }

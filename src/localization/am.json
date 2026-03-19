@@ -1,0 +1,60 @@
+{
+  "auth": {
+    "login": "ግባ",
+    "signup": "ተመዝገብ",
+    "email": "ኢሜይል",
+    "password": "የይለፍ ቃል",
+    "role": "ተግባር",
+    "admin": "አስተዳዳሪ",
+    "member": "አባል",
+    "haveAccount": "አካውንት አለዎት?",
+    "loginInstead": "ይግቡ",
+    "emptyFields": "እባክዎን ሁሉንም ቦታዎች ይሙሉ",
+    "passMismatch": "የይለፍ ቃል አይዛመድም",
+    "name": "ሙሉ ስም",
+    "nameLabel": "ስም",
+    "passwordLabel": "የይለፍ ቃል",
+    "confirmPassword": "የይለፍ ቃል ያረጋግጡ",
+    "passwordRequirements": "ቢያንስ 6 ፊደላት ወይም ምልክቶች",
+    "adminRegistration": "የአስተዳዳሪ ምዝገባ",
+    "adminKey": "የአስተዳዳሪ ሚስጥር ቁልፍ",
+    "invalidAdminKey": "የተሳሳተ የአስተዳዳሪ ሚስጥር ቁልፍ"
+  },
+  "group": {
+    "join": "ቡድን ተቀላቀል",
+    "create": "ቡድን ፍጠር",
+    "inviteCode": "የግብዣ ኮድ",
+    "groupName": "የቡድን ስም",
+    "createGroup": "ቡድን ይፍጠሩ",
+    "joinGroup": "ቡድን ይቀላቀሉ",
+    "enterCode": "ኮድ ያስገቡ",
+    "enterName": "እባክዎን የቡድን ስም ያስገቡ",
+    "joinSuccess": "ቡድኑን በተሳካ ሁኔታ ተቀላቅለዋል",
+    "codeCopied": "ኮዱ ተገልብጧል"
+  },
+  "dashboard": {
+    "history": "የእንቅስቃሴ ታሪክ",
+    "streak": "ቀጣይነት",
+    "days": "ቀናት",
+    "myStatus": "የዛሬ እንቅስቃሴ",
+    "groupMembers": "የቡድኑ አባላት"
+  },
+  "form": {
+    "prayer": "ጸሎት",
+    "bible": "የመጽሐፍ ቅዱስ ንባብ",
+    "fasting": "ጾም",
+    "notes": "ማስታወሻ",
+    "date": "ቀን",
+    "submit": "መዝግብ",
+    "done": "ተከናውኗል"
+  },
+  "common": {
+    "loading": "በመጫን ላይ...",
+    "error": "ስህተት ተከስቷል",
+    "success": "ተሳክቷል",
+    "save": "አስቀምጥ",
+    "cancel": "ተወው",
+    "logout": "ውጣ",
+    "noData": "ምንም መረጃ የለም"
+  }
+}

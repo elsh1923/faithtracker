@@ -1,0 +1,57 @@
+{
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "admin": "Admin",
+    "member": "Member",
+    "haveAccount": "Already have an account?",
+    "loginInstead": "Login instead",
+    "emptyFields": "Please fill all fields",
+    "passMismatch": "Passwords do not match",
+    "name": "Full Name",
+    "nameLabel": "Name",
+    "passwordLabel": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordRequirements": "At least 6 characters",
+    "adminRegistration": "Admin Registration",
+    "adminKey": "Admin Access Key",
+    "invalidAdminKey": "Invalid Admin key provided"
+  },
+  "group": {
+    "join": "Join Group",
+    "create": "Create Group",
+    "inviteCode": "Invite Code",
+    "groupName": "Group Name",
+    "createGroup": "Create a Group",
+    "joinGroup": "Join a Group",
+    "enterCode": "Enter Code"
+  },
+  "dashboard": {
+    "history": "Activity History",
+    "streak": "Streak",
+    "days": "days",
+    "myStatus": "Daily Activity",
+    "groupMembers": "Group Members"
+  },
+  "form": {
+    "prayer": "Prayer",
+    "bible": "Bible Reading",
+    "fasting": "Fasting",
+    "notes": "Notes",
+    "date": "Date",
+    "submit": "Submit",
+    "done": "Done"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "logout": "Logout",
+    "noData": "No data available"
+  }
+}
