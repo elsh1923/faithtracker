@@ -18,7 +18,8 @@
     "passwordRequirements": "ቢያንስ 6 ፊደላት ወይም ምልክቶች",
     "adminRegistration": "የአስተዳዳሪ ምዝገባ",
     "adminKey": "የአስተዳዳሪ ሚስጥር ቁልፍ",
-    "invalidAdminKey": "የተሳሳተ የአስተዳዳሪ ሚስጥር ቁልፍ"
+    "invalidAdminKey": "የተሳሳተ የአስተዳዳሪ ሚስጥር ቁልፍ",
+    "createAccount": "አዲስ አካውንት ፍጠር"
   },
   "group": {
     "join": "ቡድን ተቀላቀል",

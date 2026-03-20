@@ -3,8 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../context/AuthContext';
 import { View, ActivityIndicator } from 'react-native';
+import { theme } from '../theme';
 
-// Screens (to be implemented)
+// Screens
 import LoginScreen from '../screens/LoginScreen';
 import SignupScreen from '../screens/SignupScreen';
 import DashboardScreen from '../screens/DashboardScreen';
@@ -21,7 +22,7 @@ export const AppNavigator = () => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#1E3A8A" />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </View>
     );
   }
@@ -34,16 +35,17 @@ export const AppNavigator = () => {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Signup" component={SignupScreen} />
           </>
+        ) : userData?.role === 'admin' ? (
+          <>
+            <Stack.Screen name="MainDashboard" component={AdminDashboard} />
+            <Stack.Screen name="MemberDetails" component={MemberDetails} />
+          </>
         ) : !userData?.groupId ? (
           <Stack.Screen name="GroupSetup" component={GroupScreen} />
         ) : (
           <>
-            <Stack.Screen 
-              name="MainDashboard" 
-              component={userData?.role === 'admin' ? AdminDashboard : DashboardScreen} 
-            />
+            <Stack.Screen name="MainDashboard" component={DashboardScreen} />
             <Stack.Screen name="DailyForm" component={ActivityForm} />
-            <Stack.Screen name="MemberDetails" component={MemberDetails} />
           </>
         )}
       </Stack.Navigator>

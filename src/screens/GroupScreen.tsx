@@ -16,71 +16,45 @@ import {
 import { useTranslation } from 'react-i18next';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
-import { createGroup, joinGroup } from '../services/firestoreService';
+import { joinGroup } from '../services/firestoreService';
 import { logOut } from '../services/authService';
-import { PlusCircle, Users, ArrowRight, LogOut, ChevronLeft } from 'lucide-react-native';
+import { LogOut, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const GroupScreen = () => {
+const GroupScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
   const { user, userData, setUserData } = useAuth();
-  const [code, setCode] = useState('');
-  const [groupName, setGroupName] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Correctly identify admin role from userData
-  const isAdmin = userData?.role === 'admin';
-
-  const handleLogout = async () => {
-    try {
-      await logOut();
-    } catch (err: any) {
-      Alert.alert(t('common.error'), err.message);
-    }
-  };
-
-  const handleCreate = async () => {
-    if (!groupName) {
-      Alert.alert(t('common.error'), t('group.enterName'));
-      return;
-    }
-    setLoading(true);
-    try {
-      const inviteCode = await createGroup(user!.uid, groupName);
-      
-      // Update local state to trigger navigation change in AppNavigator
-      if (userData) {
-        setUserData({
-          ...userData,
-          groupId: inviteCode
-        });
-      }
-      
-      Alert.alert(t('common.success'), `${t('group.inviteCode')}: ${inviteCode}`);
-    } catch (err: any) {
-      Alert.alert(t('common.error'), err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleJoin = async () => {
-    if (!code) {
+    if (!inviteCode) {
       Alert.alert(t('common.error'), t('group.enterCode'));
       return;
     }
+
     setLoading(true);
     try {
-      await joinGroup(user!.uid, code.toUpperCase());
+      await joinGroup(user!.uid, inviteCode.trim().toUpperCase());
       
-      // Update local state to trigger navigation change
-      if (userData) {
-        setUserData({
-          ...userData,
-          groupId: code.toUpperCase()
-        });
-      }
-      
-      Alert.alert(t('common.success'), t('group.joinSuccess'));
+      Alert.alert(
+        t('common.success'), 
+        t('group.joinSuccess'),
+        [
+          { 
+            text: 'OK', 
+            onPress: () => {
+              // Update local state ONLY after user clicks OK
+              if (userData) {
+                setUserData({
+                  ...userData,
+                  groupId: inviteCode.trim().toUpperCase()
+                });
+              }
+            }
+          }
+        ]
+      );
     } catch (err: any) {
       Alert.alert(t('common.error'), err.message);
     } finally {
@@ -90,11 +64,15 @@ const GroupScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Custom Header with Logout Button */}
-      <View style={styles.headerBar}>
-        <Text style={styles.headerLogo}>FaithTrack</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <LogOut size={18} color={theme.colors.error} style={{ marginRight: 6 }} />
+      <StatusBar barStyle="dark-content" />
+      
+      <View style={styles.header}>
+        <View style={styles.headerLogo}>
+          <ShieldCheck size={28} color={theme.colors.primary} />
+          <Text style={styles.headerText}>FaithTrack</Text>
+        </View>
+        <TouchableOpacity style={styles.logoutBtn} onPress={logOut}>
+          <LogOut size={20} color={theme.colors.error} />
           <Text style={styles.logoutText}>{t('common.logout')}</Text>
         </TouchableOpacity>
       </View>
@@ -103,75 +81,53 @@ const GroupScreen = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.infoSection}>
-            <Text style={styles.headerTitle}>{isAdmin ? t('group.createGroup') : t('group.joinGroup')}</Text>
-            <Text style={styles.headerSubtitle}>ወደ መንፈሳዊ ቡድንዎ ለመቀላቀል የመጨረሻው እርምጃ</Text>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.titleSection}>
+            <Text style={styles.mainTitle}>{t('group.joinGroup')}</Text>
+            <Text style={styles.mainSubtitle}>መንፈሳዊ ቡድንዎን ለመቀላቀል እና እድገትዎን ለመከታተል የግብዣ ኮዱን ያስገቡ።</Text>
           </View>
-          
-          {/* ONLY show Join Group card if User is NOT an Admin */}
-          {!isAdmin && userData && (
-            <View style={styles.card}>
-              <View style={[styles.cardHeader, { backgroundColor: theme.colors.primary }]}>
-                <Users size={28} color="#fff" />
-                <Text style={styles.cardHeaderText}>{t('group.joinGroup')}</Text>
-              </View>
-              
-              <View style={styles.cardBody}>
-                <Text style={styles.cardSubtitle}>{t('group.enterCode')}</Text>
+
+          <View style={styles.cardContainer}>
+             <LinearGradient
+               colors={['#fff', '#F8FAFC']}
+               style={styles.card}
+             >
+                <View style={styles.iconCircle}>
+                  <UserPlus size={32} color={theme.colors.primary} />
+                </View>
+                
+                <Text style={styles.cardTitle}>{t('group.enterCode')}</Text>
+                <Text style={styles.cardDesc}>ከቡድን መሪዎ የተቀበሉትን ባለ 6 አሃዝ ኮድ እዚህ ያስገቡ።</Text>
+                
                 <TextInput
                   style={styles.input}
-                  placeholder="XXXXXX"
-                  value={code}
-                  onChangeText={setCode}
+                  placeholder="EX: ABC123"
+                  value={inviteCode}
+                  onChangeText={setInviteCode}
                   autoCapitalize="characters"
-                  maxLength={6}
-                  placeholderTextColor={theme.colors.textSecondary}
+                  maxLength={10}
+                  placeholderTextColor="#CBD5E1"
                 />
                 
                 <TouchableOpacity 
-                  style={[styles.button, { backgroundColor: theme.colors.primary }]} 
+                  style={styles.button} 
                   onPress={handleJoin}
                   disabled={loading}
                 >
-                  {loading ? <ActivityIndicator color="#fff" /> : (
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
                     <>
                       <Text style={styles.buttonText}>{t('group.join')}</Text>
                       <ArrowRight size={20} color="#fff" />
                     </>
                   )}
                 </TouchableOpacity>
-              </View>
-            </View>
-          )}
+             </LinearGradient>
+          </View>
 
-          {/* Create Group card - Essential for Admins */}
-          <View style={[styles.card, (!isAdmin && userData) && { marginTop: theme.spacing.lg }]}>
-            <View style={[styles.cardHeader, { backgroundColor: theme.colors.secondary }]}>
-              <PlusCircle size={28} color="#fff" />
-              <Text style={styles.cardHeaderText}>{t('group.createGroup')}</Text>
-            </View>
-
-            <View style={styles.cardBody}>
-              <Text style={styles.cardSubtitle}>{t('group.groupName')}</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={t('group.groupName')}
-                value={groupName}
-                onChangeText={setGroupName}
-                placeholderTextColor={theme.colors.textSecondary}
-              />
-              
-              <TouchableOpacity 
-                style={[styles.button, { backgroundColor: theme.colors.secondary }]} 
-                onPress={handleCreate}
-                disabled={loading}
-              >
-                {loading ? <ActivityIndicator color="#fff" /> : (
-                  <Text style={styles.buttonText}>{t('group.create')}</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+          <View style={styles.footer}>
+             <Text style={styles.footerText}>የቡድን ኮድ ከሌለዎት እባክዎን የአድሚን ፍቃድ ይጠይቁ።</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -182,117 +138,142 @@ const GroupScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#F1F5F9',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  headerBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: 12,
+  header: {
+    height: 70,
     backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: '#E2E8F0',
   },
   headerLogo: {
-    fontSize: 20,
-    fontFamily: 'NotoSansEthiopic_700Bold',
-    color: theme.colors.primary,
-  },
-  logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 8,
-    borderRadius: 8,
+  },
+  headerText: {
+    marginLeft: 10,
+    fontSize: 20,
+    fontFamily: 'NotoSansEthiopic_700Bold',
+    color: theme.colors.text,
+  },
+  logoutBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEF2F2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
   },
   logoutText: {
+    marginLeft: 6,
     color: theme.colors.error,
     fontFamily: 'NotoSansEthiopic_700Bold',
     fontSize: 14,
   },
-  content: {
-    padding: theme.spacing.lg,
+  scrollContent: {
     flexGrow: 1,
+    padding: 24,
+    justifyContent: 'center',
   },
-  infoSection: {
-    marginBottom: theme.spacing.xl,
-    marginTop: theme.spacing.md,
+  titleSection: {
+    marginBottom: 40,
+    alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 28,
+  mainTitle: {
+    fontSize: 32,
     fontFamily: 'NotoSansEthiopic_700Bold',
     color: theme.colors.text,
     textAlign: 'center',
   },
-  headerSubtitle: {
+  mainSubtitle: {
+    fontSize: 15,
+    fontFamily: 'NotoSansEthiopic_400Regular',
+    color: theme.colors.textSecondary,
+    textAlign: 'center',
+    marginTop: 10,
+    lineHeight: 22,
+  },
+  cardContainer: {
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  card: {
+    borderRadius: 30,
+    padding: 30,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fff',
+  },
+  iconCircle: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: '#E0F2FE',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  cardTitle: {
+    fontSize: 22,
+    fontFamily: 'NotoSansEthiopic_700Bold',
+    color: theme.colors.text,
+  },
+  cardDesc: {
     fontSize: 14,
     fontFamily: 'NotoSansEthiopic_400Regular',
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginTop: 4,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: theme.borderRadius.xl,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 4,
-    overflow: 'hidden',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.primary,
-  },
-  cardHeaderText: {
-    color: '#fff',
-    fontSize: 18,
-    fontFamily: 'NotoSansEthiopic_700Bold',
-    marginLeft: 10,
-  },
-  cardBody: {
-    padding: theme.spacing.lg,
-    alignItems: 'center',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    fontFamily: 'NotoSansEthiopic_700Bold',
-    color: theme.colors.text,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
+    marginTop: 8,
+    marginBottom: 24,
   },
   input: {
     width: '100%',
-    height: 52,
-    backgroundColor: '#F8FAFC',
-    borderRadius: theme.borderRadius.md,
-    paddingHorizontal: theme.spacing.md,
+    height: 60,
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    fontFamily: 'NotoSansEthiopic_400Regular',
-    fontSize: 16,
-    marginBottom: theme.spacing.lg,
-    color: theme.colors.text,
+    borderColor: '#E2E8F0',
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    fontSize: 24,
+    fontFamily: 'NotoSansEthiopic_700Bold',
+    color: theme.colors.primary,
+    textAlign: 'center',
+    letterSpacing: 4,
+    marginBottom: 24,
   },
   button: {
     width: '100%',
-    height: 52,
-    borderRadius: theme.borderRadius.md,
+    height: 60,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 15,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 2,
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     fontFamily: 'NotoSansEthiopic_700Bold',
-    marginRight: theme.spacing.xs,
+    marginRight: 10,
   },
+  footer: {
+    marginTop: 40,
+  },
+  footerText: {
+    textAlign: 'center',
+    color: theme.colors.textSecondary,
+    fontSize: 13,
+    fontFamily: 'NotoSansEthiopic_400Regular',
+    paddingHorizontal: 20,
+  }
 });
 
 export default GroupScreen;

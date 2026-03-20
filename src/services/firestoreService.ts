@@ -17,7 +17,7 @@ import { db } from './firebase';
 import { nanoid } from 'nanoid/non-secure'; // Compact and faster for small codes
 
 export const createGroup = async (adminId: string, groupName: string) => {
-  const inviteCode = nanoid(6).toUpperCase(); // Short, uppercase for readability
+  const inviteCode = nanoid(6).toUpperCase();
   const groupRef = doc(db, 'groups', inviteCode);
   
   const groupData = {
@@ -25,17 +25,25 @@ export const createGroup = async (adminId: string, groupName: string) => {
     adminId,
     inviteCode,
     members: [adminId],
-    createdAt: serverTimestamp()
+    createdAt: new Date().toISOString()
   };
   
   await setDoc(groupRef, groupData);
   
-  // Link the group to the admin's user doc
-  await updateDoc(doc(db, 'users', adminId), {
-    groupId: inviteCode
-  });
+  await setDoc(doc(db, 'users', adminId), {
+    groupId: inviteCode,
+    role: 'admin'
+  }, { merge: true });
   
   return inviteCode;
+};
+
+export const getGroupInfo = async (groupId: string) => {
+  const groupDoc = await getDoc(doc(db, 'groups', groupId));
+  if (groupDoc.exists()) {
+    return groupDoc.data();
+  }
+  return null;
 };
 
 export const joinGroup = async (userId: string, inviteCode: string) => {
@@ -52,9 +60,10 @@ export const joinGroup = async (userId: string, inviteCode: string) => {
   });
   
   // Link the group to the user's user doc
-  await updateDoc(doc(db, 'users', userId), {
-    groupId: inviteCode
-  });
+  await setDoc(doc(db, 'users', userId), {
+    groupId: inviteCode,
+    role: 'member' // Ensure role is preserved or set
+  }, { merge: true });
   
   return groupDoc.data();
 };
@@ -79,9 +88,8 @@ export const getMemberHistory = async (userId: string) => {
   const activityCollection = collection(db, 'activities');
   const q = query(
     activityCollection, 
-    where('userId', '==', userId), 
-    orderBy('date', 'desc'),
-    limit(30)
+    where('userId', '==', userId),
+    limit(100)
   );
   
   const snapshot = await getDocs(q);
@@ -100,9 +108,8 @@ export const getMemberStatusForAdmin = async (userId: string) => {
   const activityCollection = collection(db, 'activities');
   const q = query(
     activityCollection, 
-    where('userId', '==', userId), 
-    orderBy('date', 'desc'),
-    limit(10)
+    where('userId', '==', userId),
+    limit(100)
   );
   
   const snapshot = await getDocs(q);

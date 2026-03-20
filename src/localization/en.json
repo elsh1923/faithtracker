@@ -18,7 +18,8 @@
     "passwordRequirements": "At least 6 characters",
     "adminRegistration": "Admin Registration",
     "adminKey": "Admin Access Key",
-    "invalidAdminKey": "Invalid Admin key provided"
+    "invalidAdminKey": "Invalid Admin key provided",
+    "createAccount": "Create Account"
   },
   "group": {
     "join": "Join Group",
