@@ -155,3 +155,15 @@ export const getPhaseFeedback = async (userId: string, groupId: string, phaseInd
   }
   return null;
 };
+
+export const addDailyCheckIn = async (userId: string, activities: { prayer: boolean, bible: boolean, prostrations: boolean }) => {
+  const activityCollection = collection(db, 'activities');
+  await addDoc(activityCollection, {
+    userId,
+    prayer: activities.prayer,
+    bibleReading: activities.bible,
+    prostrations: activities.prostrations,
+    timestamp: new Date().toISOString(),
+    date: serverTimestamp()
+  });
+};

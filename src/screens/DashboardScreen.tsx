@@ -30,7 +30,8 @@ import {
   TrendingUp,
   Target,
   MessageSquareQuote,
-  Quote
+  Quote,
+  Check
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { format, startOfDay, parseISO, differenceInDays, isValid, isSameDay } from 'date-fns';
@@ -56,6 +57,11 @@ const DashboardScreen = () => {
   const [stats, setStats] = useState({ streak: 0, total: 0, phaseCount: 0 });
   const [groupCreatedAt, setGroupCreatedAt] = useState<any>(null);
   const [phaseNote, setPhaseNote] = useState<string | null>(null);
+
+  // Today's activities
+  const [prayerChecked, setPrayerChecked] = useState(false);
+  const [bibleChecked, setBibleChecked] = useState(false);
+  const [prostrationsChecked, setProstrationsChecked] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -151,10 +157,25 @@ const DashboardScreen = () => {
       return;
     }
 
+    if (!prayerChecked && !bibleChecked && !prostrationsChecked) {
+      Alert.alert(t('common.error'), "እባክዎን ቢያንስ አንድ ተግባር ይምረጡ");
+      return;
+    }
+
     setCheckingIn(true);
     try {
-      await addDailyCheckIn(user!.uid);
+      await addDailyCheckIn(user!.uid, {
+        prayer: prayerChecked,
+        bible: bibleChecked,
+        prostrations: prostrationsChecked
+      });
       Alert.alert(t('common.success'), "የዛሬ ምዝገባዎ ተሳክቷል!");
+      
+      // Reset checks
+      setPrayerChecked(false);
+      setBibleChecked(false);
+      setProstrationsChecked(false);
+      
       fetchData();
     } catch (err: any) {
       Alert.alert('Error', err.message);
@@ -248,6 +269,29 @@ const DashboardScreen = () => {
           </View>
         )}
 
+        {/* Activity Checklist */}
+        <View style={styles.checklistCard}>
+          <Text style={styles.checklistTitle}>የዛሬ ተግባራት</Text>
+          <ActivityCheck 
+            icon={<Heart size={20} color={theme.colors.primary} />} 
+            label={t('form.prayer')} 
+            checked={prayerChecked} 
+            onToggle={() => setPrayerChecked(!prayerChecked)} 
+          />
+          <ActivityCheck 
+            icon={<BookOpen size={20} color={theme.colors.accent} />} 
+            label={t('form.bible')} 
+            checked={bibleChecked} 
+            onToggle={() => setBibleChecked(!bibleChecked)} 
+          />
+          <ActivityCheck 
+            icon={<Target size={20} color={theme.colors.secondary} />} 
+            label={t('form.prostrations')} 
+            checked={prostrationsChecked} 
+            onToggle={() => setProstrationsChecked(!prostrationsChecked)} 
+          />
+        </View>
+
         <TouchableOpacity 
           style={styles.checkInBtn} 
           onPress={handleCheckIn}
@@ -277,7 +321,15 @@ const DashboardScreen = () => {
             </View>
           ) : (
             history.map((item, index) => (
-              <HistoryItem key={item.id || index} date={parseSafeDate(item.timestamp)} />
+              <HistoryItem 
+                key={item.id || index} 
+                date={parseSafeDate(item.timestamp)} 
+                activities={{
+                  prayer: item.prayer,
+                  bible: item.bibleReading,
+                  prostrations: item.prostrations
+                }}
+              />
             ))
           )}
         </View>
@@ -299,17 +351,36 @@ const StatCard = ({ icon, label, value, unit }: any) => (
   </View>
 );
 
-const HistoryItem = ({ date }: { date: Date }) => (
+const HistoryItem = ({ date, activities }: { date: Date, activities: any }) => (
   <View style={styles.historyItem}>
     <View style={styles.historyLeading}>
       <View style={styles.historyIcon}><CheckCircle2 size={16} color={theme.colors.secondary} /></View>
       <View>
         <Text style={styles.historyDate}>{format(date, 'MMM dd, yyyy')}</Text>
-        <Text style={styles.historyTime}>{format(date, 'hh:mm a')}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={styles.historyTime}>{format(date, 'hh:mm a')}</Text>
+          <View style={styles.miniIcons}>
+            {activities.prayer && <Heart size={10} color={theme.colors.primary} style={{marginLeft: 4}} />}
+            {activities.bible && <BookOpen size={10} color={theme.colors.accent} style={{marginLeft: 4}} />}
+            {activities.prostrations && <Target size={10} color={theme.colors.secondary} style={{marginLeft: 4}} />}
+          </View>
+        </View>
       </View>
     </View>
     <ChevronRight size={18} color="#94A3B8" />
   </View>
+);
+
+const ActivityCheck = ({ icon, label, checked, onToggle }: any) => (
+  <TouchableOpacity style={styles.checkRow} onPress={onToggle}>
+    <View style={styles.checkLabelContainer}>
+      <View style={styles.checkIconBox}>{icon}</View>
+      <Text style={styles.checkLabel}>{label}</Text>
+    </View>
+    <View style={[styles.checkBox, checked && styles.checkBoxActive]}>
+      {checked && <Check size={16} color="#fff" />}
+    </View>
+  </TouchableOpacity>
 );
 
 const styles = StyleSheet.create({
@@ -352,7 +423,16 @@ const styles = StyleSheet.create({
   noteTitle: { fontSize: 14, fontFamily: 'NotoSansEthiopic_700Bold', color: '#9A3412', marginLeft: 8 },
   noteContentRow: { flexDirection: 'row' },
   quoteIcon: { marginTop: -4, marginRight: 8 },
-  noteText: { flex: 1, fontSize: 16, fontFamily: 'NotoSansEthiopic_400Regular', color: '#431407', lineHeight: 24, fontStyle: 'italic' }
+  noteText: { flex: 1, fontSize: 16, fontFamily: 'NotoSansEthiopic_400Regular', color: '#431407', lineHeight: 24, fontStyle: 'italic' },
+  checklistCard: { backgroundColor: '#fff', borderRadius: 24, padding: 20, marginBottom: 20, elevation: 4 },
+  checklistTitle: { fontSize: 16, fontFamily: 'NotoSansEthiopic_700Bold', color: theme.colors.text, marginBottom: 15 },
+  checkRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
+  checkLabelContainer: { flexDirection: 'row', alignItems: 'center' },
+  checkIconBox: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#F8FAFC', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  checkLabel: { fontSize: 16, fontFamily: 'NotoSansEthiopic_400Regular', color: theme.colors.text },
+  checkBox: { width: 28, height: 28, borderRadius: 8, borderWidth: 2, borderColor: '#E2E8F0', justifyContent: 'center', alignItems: 'center' },
+  checkBoxActive: { backgroundColor: theme.colors.secondary, borderColor: theme.colors.secondary },
+  miniIcons: { flexDirection: 'row', marginLeft: 10 },
 });
 
 export default DashboardScreen;

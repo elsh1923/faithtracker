@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { theme } from '../theme';
 import { useAuth } from '../context/AuthContext';
 import { submitActivity } from '../services/firestoreService';
-import { BookOpen, Church, Soup, FileText, Check } from 'lucide-react-native';
+import { BookOpen, Church, Target, FileText, Check } from 'lucide-react-native';
 import { format } from 'date-fns';
 
 const ActivityForm = ({ navigation }: any) => {
@@ -22,7 +22,7 @@ const ActivityForm = ({ navigation }: any) => {
   const { user, userData } = useAuth();
   const [prayer, setPrayer] = useState(false);
   const [bible, setBible] = useState(false);
-  const [fasting, setFasting] = useState(false);
+  const [prostrations, setProstrations] = useState(false);
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const ActivityForm = ({ navigation }: any) => {
       await submitActivity(user!.uid, userData!.groupId!, {
         prayer,
         bibleReading: bible,
-        fasting,
+        prostrations,
         notes
       });
       Alert.alert(t('common.success'), t('form.done'));
@@ -83,12 +83,12 @@ const ActivityForm = ({ navigation }: any) => {
 
           <View style={styles.row}>
             <View style={styles.iconLabel}>
-              <Soup size={24} color={theme.colors.secondary} />
-              <Text style={styles.label}>{t('form.fasting')}</Text>
+              <Target size={24} color={theme.colors.secondary} />
+              <Text style={styles.label}>{t('form.prostrations')}</Text>
             </View>
             <Switch
-              value={!!fasting}
-              onValueChange={setFasting}
+              value={!!prostrations}
+              onValueChange={setProstrations}
               trackColor={{ false: '#CBD5E1', true: theme.colors.secondary }}
             />
           </View>

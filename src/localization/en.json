@@ -35,12 +35,14 @@
     "streak": "Streak",
     "days": "days",
     "myStatus": "Daily Activity",
-    "groupMembers": "Group Members"
+    "groupMembers": "Group Members",
+    "checkIn": "Check In Today",
+    "total": "Total Records"
   },
   "form": {
     "prayer": "Prayer",
     "bible": "Bible Reading",
-    "fasting": "Fasting",
+    "prostrations": "Prostrations",
     "notes": "Notes",
     "date": "Date",
     "submit": "Submit",

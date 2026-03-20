@@ -38,12 +38,14 @@
     "streak": "ቀጣይነት",
     "days": "ቀናት",
     "myStatus": "የዛሬ እንቅስቃሴ",
-    "groupMembers": "የቡድኑ አባላት"
+    "groupMembers": "የቡድኑ አባላት",
+    "checkIn": "ዛሬን ይመዝግቡ",
+    "total": "ጠቅላላ ምዝገባ"
   },
   "form": {
     "prayer": "ጸሎት",
-    "bible": "የመጽሐፍ ቅዱስ ንባብ",
-    "fasting": "ጾም",
+    "bible": "መጽሐፍ ቅዱስ ንባብ",
+    "prostrations": "ስግደት",
     "notes": "ማስታወሻ",
     "date": "ቀን",
     "submit": "መዝግብ",
