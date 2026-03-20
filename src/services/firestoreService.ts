@@ -133,3 +133,25 @@ export const hasAnyAdmin = async () => {
     return true;
   }
 };
+
+export const savePhaseFeedback = async (userId: string, groupId: string, phaseIndex: number, note: string) => {
+  const feedbackId = `${userId}_${groupId}_${phaseIndex}`;
+  const feedbackRef = doc(db, 'phaseFeedback', feedbackId);
+  
+  await setDoc(feedbackRef, {
+    userId,
+    groupId,
+    phaseIndex,
+    note,
+    lastUpdate: serverTimestamp()
+  }, { merge: true });
+};
+
+export const getPhaseFeedback = async (userId: string, groupId: string, phaseIndex: number) => {
+  const feedbackId = `${userId}_${groupId}_${phaseIndex}`;
+  const feedbackDoc = await getDoc(doc(db, 'phaseFeedback', feedbackId));
+  if (feedbackDoc.exists()) {
+    return feedbackDoc.data();
+  }
+  return null;
+};

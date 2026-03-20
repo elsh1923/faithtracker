@@ -53,7 +53,7 @@ const LoginScreen = ({ navigation }: any) => {
       >
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.title}>FaithTrack</Text>
+            <Text style={styles.title}>የዕለት ማስታወሻ</Text>
             <Text style={styles.subtitle}>{t('auth.login')}</Text>
           </View>
 

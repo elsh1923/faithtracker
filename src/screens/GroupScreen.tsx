@@ -69,7 +69,7 @@ const GroupScreen = ({ navigation }: any) => {
       <View style={styles.header}>
         <View style={styles.headerLogo}>
           <ShieldCheck size={28} color={theme.colors.primary} />
-          <Text style={styles.headerText}>FaithTrack</Text>
+          <Text style={styles.headerText}>የዕለት ማስታወሻ</Text>
         </View>
         <TouchableOpacity style={styles.logoutBtn} onPress={logOut}>
           <LogOut size={20} color={theme.colors.error} />
