@@ -63,7 +63,10 @@ const AdminDashboard = ({ navigation }: any) => {
       setGroupInfo(gInfo);
       const membersData = await getGroupMembers(userData!.groupId!);
       
-      const enrichedMembers = await Promise.all(membersData.map(async (m) => {
+      // Filter out the admin themselves from the list
+      const filteredMembersData = membersData.filter(m => m.id !== user!.uid);
+      
+      const enrichedMembers = await Promise.all(filteredMembersData.map(async (m) => {
         const history = await getMemberHistory(m.id);
         const phaseCount = gInfo ? calculatePhaseCount(gInfo.createdAt, history) : 0;
         return { ...m, phaseCount };

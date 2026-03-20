@@ -1,25 +1,25 @@
 {
   "expo": {
-    "name": "faithtrack",
+    "name": "የዕለት መቆጣጠሪያ",
     "slug": "faithtrack",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/faithtracker_icon-removebg-preview (1).png",
+    "icon": "./assets/elegant_icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/elegant_splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#FEF9EF"
+      "backgroundColor": "#0F172A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.elshaday.faithtracker"
     },
     "android": {
+      "package": "com.elshaday.faithtracker",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#0F172A",
+        "foregroundImage": "./assets/elegant_icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
@@ -31,6 +31,17 @@
       "expo-localization",
       "expo-secure-store",
       "expo-web-browser"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a2bc8414-1b67-4a11-a6b0-0ec231f900f3"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a2bc8414-1b67-4a11-a6b0-0ec231f900f3"
+    }
   }
 }
