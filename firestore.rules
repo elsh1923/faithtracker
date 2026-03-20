@@ -37,5 +37,11 @@ service cloud.firestore {
       allow read: if true; // Publicly check if admin exists
       allow create, update: if isSignedIn();
     }
+
+    // Phase Feedback (Admin notes)
+    match /phaseFeedback/{feedbackId} {
+      allow read: if isSignedIn() && (request.auth.uid == resource.data.userId || getUserData().role == 'admin');
+      allow write: if isSignedIn() && getUserData().role == 'admin';
+    }
   }
 }

@@ -65,6 +65,10 @@ const AdminDashboard = ({ navigation }: any) => {
     setLoading(true);
     try {
       const gInfo = await getGroupInfo(userData!.groupId!);
+      if (!gInfo) {
+        setLoading(false);
+        return;
+      }
       setGroupInfo(gInfo);
       
       const start = startOfDay(parseSafeDate(gInfo.createdAt));

@@ -32,7 +32,7 @@
       "expo-secure-store",
       "expo-web-browser"
     ],
-    "extra": {
+     "extra": {
       "eas": {
         "projectId": "a2bc8414-1b67-4a11-a6b0-0ec231f900f3"
       }
@@ -41,7 +41,10 @@
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/a2bc8414-1b67-4a11-a6b0-0ec231f900f3"
+      "url": "https://u.expo.dev/a2bc8414-1b67-4a11-a6b0-0ec231f900f3",
+      "enabled": true,
+      "fallbackToCacheTimeout": 30000,
+      "checkAutomatically": "ON_LOAD"
     }
   }
 }
